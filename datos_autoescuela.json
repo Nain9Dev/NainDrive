@@ -1,0 +1,48 @@
+{
+    "alumnos": [
+        {
+            "num_registro": "2025/Auto",
+            "nombre": "Aitor",
+            "primer_apellido": "Mendoza",
+            "segundo_apellido": "Vallejo",
+            "dni": "12345678G",
+            "fecha_nacimiento": "01-01-2001",
+            "fecha_registro": "Hoy",
+            "permiso_opta": "A",
+            "domicilio": "a",
+            "municipio": "a",
+            "provincia": "a",
+            "telefono1": "666555444",
+            "telefono2": "",
+            "correo": "test@test.com",
+            "num_clases": 10,
+            "profesor": "NainDev",
+            "examenes_teoricos": [
+                "01-01-2026"
+            ],
+            "examenes_circulacion": [],
+            "total_anticipos": 500.0
+        }
+    ],
+    "profesores": [
+        {
+            "nombre": "NainDev",
+            "primer_apellido": "Mendoza",
+            "segundo_apellido": "Vallejo",
+            "vehiculo": "1234-BBC",
+            "tipo_vehiculo": "Turismo",
+            "itv": "01-01-2026",
+            "gastos_combustible": {}
+        }
+    ],
+    "permisos": [
+        {
+            "tipo_permiso": "B",
+            "precio_matricula": 200.0,
+            "clases_incluidas": 10,
+            "precio_por_clase": 30.0,
+            "precio_examen": 50.0,
+            "precio_renovacion": 150.0
+        }
+    ]
+}
