@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+
+# Virtual environments
+.env
+.venv
+venv/
+env/
+ENV/
+
+# SQLite databases & Local state
+*.db
+*.sqlite
+*.sqlite3
+autoescuela.db
+
+# Output artifacts & legacy text files
+*.pdf
+*.txt
+Factura_*.txt
+!requirements.txt
+!README.md
+!pytest.ini
+!*.toml
+!*.props
+!*.slnx
+!*.toml
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store

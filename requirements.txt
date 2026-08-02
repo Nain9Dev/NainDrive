@@ -1,0 +1,6 @@
+streamlit>=1.41.0
+pydantic>=2.10.0
+pydantic-settings>=2.7.0
+sqlalchemy>=2.0.36
+fpdf2>=2.8.2
+pytest>=8.3.4
