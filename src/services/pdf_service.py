@@ -19,7 +19,7 @@ class PDFInvoiceGenerator(FPDF):
     def header(self) -> None:
         self.set_font("Helvetica", "B", 16)
         self.set_text_color(24, 43, 73)
-        self.cell(0, 10, "AUTOESCUELA UAX - GESTIÓN Y FACTURACIÓN", align="C", new_x="LMARGIN", new_y="NEXT")
+        self.cell(0, 10, "AUTOESCUELA NAINDEV - GESTIÓN Y FACTURACIÓN", align="C", new_x="LMARGIN", new_y="NEXT")
         self.set_font("Helvetica", "I", 10)
         self.set_text_color(100, 100, 100)
         self.cell(0, 6, "Plataforma Tecnológica Modular | Registro Contable Oficial", align="C", new_x="LMARGIN", new_y="NEXT")

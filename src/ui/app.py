@@ -20,7 +20,7 @@ from src.ui.components import (
 )
 
 st.set_page_config(
-    page_title="Gestión Autoescuela UAX | Demo Arquitectura Limpia",
+    page_title="Gestión Autoescuela NainDev | Demo Arquitectura Limpia",
     page_icon="🚗",
     layout="wide",
     initial_sidebar_state="expanded",

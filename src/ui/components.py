@@ -17,7 +17,7 @@ def render_header() -> None:
     st.markdown(
         """
         <div style="background: linear-gradient(90deg, #182B49 0%, #2A4878 100%); padding: 1.5rem; border-radius: 10px; color: white; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h1 style="margin:0; font-size: 2.2rem; font-family: sans-serif; color: white;">🚗 Sistema de Gestión de Autoescuela UAX</h1>
+            <h1 style="margin:0; font-size: 2.2rem; font-family: sans-serif; color: white;">🚗 Sistema de Gestión de Autoescuela NainDev</h1>
             <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem; opacity: 0.9;">
                 Plataforma Web modular construida en <b>Python + Clean Architecture + Pydantic v2 + SQLite</b>.
             </p>
