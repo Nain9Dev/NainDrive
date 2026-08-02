@@ -21,7 +21,7 @@ from src.ui.components import (
 
 st.set_page_config(
     page_title="Gestión Autoescuela NainDev | Demo Arquitectura Limpia",
-    page_icon="🚗",
+    page_icon="n",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -40,10 +40,10 @@ def main() -> None:
 
     tab_dashboard, tab_students, tab_instructors, tab_billing = st.tabs(
         [
-            "📊 Dashboard Comercial",
-            "🎓 Alumnos y Clases",
-            "👨‍🏫 Instructores y Flota",
-            "🧾 Facturación y Caja PDF",
+            "Dashboard Comercial",
+            "Alumnos y Clases",
+            "Instructores y Flota",
+            "Facturación y Caja PDF",
         ]
     )
 
