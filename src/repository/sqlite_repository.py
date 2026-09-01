@@ -160,7 +160,7 @@ class SQLiteRepository:
                     },
                     {
                         "registration_number": "EXP-2026-003",
-                        "dni": "44556677C",
+                        "dni": "44556677L",
                         "first_name": "David",
                         "last_name": "Rodriguez Fernandez",
                         "phone": "655443322",
@@ -173,7 +173,7 @@ class SQLiteRepository:
                     },
                     {
                         "registration_number": "EXP-2026-004",
-                        "dni": "78901234Z",
+                        "dni": "78901234X",
                         "first_name": "Sofia",
                         "last_name": "Alvarez Castillo",
                         "phone": "677889900",

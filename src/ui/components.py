@@ -2,6 +2,8 @@
 Reusable Streamlit UI Components and Rendering Helpers.
 Implements responsive layouts, interactive tables, Pydantic modal forms, and FPDF download streams with NainDev dark design system.
 """
+from decimal import Decimal
+
 import streamlit as st
 import pandas as pd
 from typing import Dict, Any, List
@@ -9,6 +11,7 @@ from pydantic import ValidationError
 
 from src.repository.sqlite_repository import SQLiteRepository
 from src.domain.models import Student, Instructor, LicensePackage
+from src.domain.money import to_money
 from src.services.billing_service import BillingService
 from src.services.pdf_service import generate_invoice_pdf_bytes
 
@@ -149,9 +152,9 @@ def render_kpi_dashboard(repo: SQLiteRepository) -> None:
     students = repo.get_all_students()
     instructors = repo.get_all_instructors()
 
-    total_gross = 0.0
-    total_vat = 0.0
-    total_pending = 0.0
+    total_gross = Decimal("0.00")
+    total_vat = Decimal("0.00")
+    total_pending = Decimal("0.00")
     completed_lessons_sum = 0
 
     license_counts: Dict[str, int] = {"Permiso B": 0, "Permiso A2": 0, "Permiso C": 0, "Otros": 0}
@@ -295,7 +298,9 @@ def render_students_management(repo: SQLiteRepository) -> None:
                 st.markdown("##### Registrar Nuevo Anticipo / A cuenta")
                 extra_pay = st.number_input("Importe Entregado (€)", min_value=10.0, max_value=1000.0, step=20.0, value=50.0)
                 if st.button("Añadir Pago a Cuenta", use_container_width=True):
-                    target_student.total_advances_paid += round(float(extra_pay), 2)
+                    target_student.total_advances_paid = to_money(
+                        target_student.total_advances_paid + to_money(extra_pay)
+                    )
                     repo.save_student(target_student)
                     st.success(f"Añadido cobro a cuenta de {extra_pay:.2f} €.")
                     st.rerun()

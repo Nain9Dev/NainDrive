@@ -9,13 +9,13 @@ from src.domain.models import Student, LicensePackage, Instructor, AdvancePaymen
 
 def test_valid_student_creation() -> None:
     student = Student(
-        dni="12345678A",
+        dni="12345678Z",
         first_name="Carlos",
         last_name="Alcaraz",
         phone="611223344",
         target_license="B"
     )
-    assert student.dni == "12345678A"
+    assert student.dni == "12345678Z"
     assert student.completed_classes == 0
 
 
@@ -31,7 +31,7 @@ def test_invalid_dni_format_raises_error() -> None:
 def test_empty_student_name_raises_error() -> None:
     with pytest.raises(ValidationError):
         Student(
-            dni="12345678B",
+            dni="12345678Z",
             first_name="   ",
             last_name="Gomez"
         )
@@ -50,7 +50,7 @@ def test_license_package_negative_fees_rejected() -> None:
 
 
 def test_add_classes_domain_action() -> None:
-    student = Student(dni="87654321Z", first_name="Ana", last_name="Pastor")
+    student = Student(dni="87654321X", first_name="Ana", last_name="Pastor")
     total = student.add_classes(5)
     assert total == 5
     assert student.completed_classes == 5
@@ -61,4 +61,4 @@ def test_add_classes_domain_action() -> None:
 
 def test_advance_payment_strictly_positive() -> None:
     with pytest.raises(ValidationError):
-        AdvancePayment(student_dni="12345678A", amount=0.0)
+        AdvancePayment(student_dni="12345678Z", amount=0.0)

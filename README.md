@@ -1,91 +1,94 @@
-# Sistema Inteligente de Gestión y Facturación de Autoescuelas
+# Deterministic billing engine for driving schools
 
-[![Python](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-brightgreen)](#)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard%201.41%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
-[![ORM](https://img.shields.io/badge/ORM-SQLAlchemy%202.0-orange)](https://www.sqlalchemy.org/)
-[![Validation](https://img.shields.io/badge/Validation-Pydantic%20v2-e92063)](https://docs.pydantic.dev/)
+Python 3.12 · Clean Architecture · Pydantic v2 · SQLAlchemy 2.0 · Streamlit
 
-Plataforma Web interactiva y motor contable diseñado para la gestión integral, monitorización de flotas y facturación automatizada de autoescuelas. Construido con **Python 3.12**, principios estrictos de **Clean Architecture**, modelado de datos con **Pydantic v2** y persistencia transaccional en **SQLite**.
+A billing engine where the arithmetic is verifiable: amounts are `Decimal`, rounding is
+explicit, identity documents are checksum-verified, and the stated invoice total equals
+the sum of its parts with no tolerance.
 
----
-
-## Características y Valor para el Negocio
-
-1. **Dashboard Ejecutivo 360°:** Visualización en tiempo real de ingresos brutos proyectados, recaudación tributaria de IVA (21%), saldos pendientes por cobrar y gráficos de distribución por tipo de permiso (Turismo B, Motocicleta A2, Camión Rígido C).
-2. **Gestión Operativa Rápida:** Inscripción segura con validación de expresiones regulares para DNI/NIF/NIE, control de clases prácticas impartidas por docente y registro oficial de convocatorias de examen DGT.
-3. **Motor de Facturación y Emisión PDF en Memoria:** Cálculo matemático exacto que compara bonos de clases incluidas vs. clases adicionales reales, restando anticipos abonados al instante. Genera documentos formales en formato PDF listos para descarga sin almacenar residuos en disco.
-4. **Infraestructura Eficiente (Coste Cero):** Operable libremente en servicios de hosting gratuito como **Streamlit Community Cloud** o contenedores eficientes sin depender de servidores de bases de datos de terceros.
+The driving school is the setting. The engine is the subject.
 
 ---
 
-## Arquitectura del Sistema
+## What this demonstrates
 
-El sistema implementa una separación estricta entre el cerebro del dominio y los canales de renderizado o persistencia:
+**Money is never a float.** Every amount is a `Decimal`, quantised to two places with
+half-up rounding through a single module. Python's built-in `round` breaks ties toward
+the even digit; invoicing breaks them away from zero. On a taxable base of 350.50 the tax
+is exactly 73.605, where the two conventions disagree by a cent. The engine returns 73.61.
+
+**Totals reconcile exactly.** The invoice model rejects itself if the parts do not add up
+to the stated total. There is no tolerance, because a tolerance on a financial invariant
+is a declaration that the arithmetic is untrusted.
+
+**Identity is verified, not pattern-matched.** Spanish `DNI` and `NIE` carry a control
+letter derived from the number modulo 23. The validator computes it, so `12345678A` is
+rejected while `12345678Z` is accepted. A shape check would accept both.
+
+**Requirements map to tests.** Every requirement carries an identifier, and
+[`docs/50-traceability.md`](docs/50-traceability.md) states which test proves it and
+which are still uncovered. Nine of fourteen today. The gaps are listed, not hidden.
+
+## Documentation
+
+The full lifecycle lives in [`docs/`](docs/README.md): charter, requirements, open
+questions, architecture, data model, decision records, tasks, traceability and runbook.
+
+Notably, [ADR-0003](docs/30-decisions/ADR-0003-service-layer-boundary.md) records a
+boundary violation that is still present: the presentation layer reaches the repository
+directly. It is written down with its consequences and its fix, rather than omitted.
+
+## Architecture
+
+Dependencies point inward. The domain depends on nothing.
 
 ```mermaid
 graph TD
-    UI[Streamlit Web Shell / UI Layer] --> SVC[Business & Financial Services]
-    UI --> REPO[SQLAlchemy SQLite Repository]
-    SVC --> DOM[Pydantic Domain Model & Invariants]
+    UI[Presentation - Streamlit] --> SVC[Services - business logic]
+    UI -. violation, see ADR-0003 .-> REPO
+    SVC --> DOM[Domain - entities, money, identity]
+    SVC --> REPO[Repository - SQLAlchemy over SQLite]
     REPO --> DOM
-    SVC --> PDF[In-Memory FPDF2 Engine]
 
     style DOM fill:#182B49,stroke:#fff,stroke-width:2px,color:#fff
     style UI fill:#FF4B4B,stroke:#fff,stroke-width:2px,color:#fff
-    style REPO fill:#2A4878,stroke:#fff,color:#fff
 ```
 
-### Mapa del Repositorio
+| Module | Responsibility |
+| :--- | :--- |
+| `src/domain/` | Entities and invariants. `money.py` defines the rounding policy, `identity.py` the checksum |
+| `src/services/` | Billing engine and in-memory PDF generation |
+| `src/repository/` | SQLAlchemy persistence over SQLite |
+| `src/ui/` | Streamlit dashboard |
+| `tests/` | 43 tests |
 
-| Carpeta / Módulo | Responsabilidad Arquitectónica | Estado |
-| :--- | :--- | :--- |
-| `src/domain/` | Entidades inmutables, reglas tributarias españolas y validaciones con Pydantic v2 | Activo |
-| `src/repository/` | Persistencia relacional SQLAlchemy, esquemas SQLite y motor de seeding de datos demo | Activo |
-| `src/services/` | Motor financiero contable e ilustrador in-memory de facturas formales FPDF2 | Activo |
-| `src/ui/` | Dashboard interactivo multi-pestaña y componentes visuales Streamlit | Activo |
-| `tests/` | Suite de pruebas unitarias y de integración transaccional in-memory con Pytest | 12 / 12 Pasadas |
+## Running it
 
----
-
-## Instalación y Ejecución Rápida en Local
-
-### 1. Requisitos Previos
-- Python 3.10 o superior (Recomendado **Python 3.12**).
-
-### 2. Configuración de Entorno e Instalación de Dependencias
 ```powershell
-# Crear y activar entorno virtual en Windows
 python -m venv .venv
 .\.venv\Scripts\activate
-
-# Instalar dependencias empresariales
 pip install -r requirements.txt
-```
-
-### 3. Ejecutar Pruebas Automatizadas (Pytest)
-```powershell
 pytest -v
-```
-
-### 4. Abrir Dashboard Web en el Navegador
-```powershell
 streamlit run src/ui/app.py
 ```
-*(El sistema se abrirá en `http://localhost:8501` y poblará automáticamente alumnos de demostración si la base de datos es inicial).*
 
----
+The dashboard opens on `http://localhost:8501` and seeds fictional demonstration data on
+an empty database. No real personal data is used anywhere, including seeds.
 
-## Despliegue Público Gratuito (Demo en 1-Clic)
+## What this is not
 
-Para exponer esta demo ante empresas y reclutadores 24/7 de forma 100% gratuita:
-1. Regístrate o inicia sesión gratis con tu GitHub en [Streamlit Community Cloud](https://share.streamlit.io/).
-2. Haz clic en **"Create app"** -> **"Yes, proceed"**.
-3. Selecciona tu repositorio: `Nain9Dev/Gestion-Autoescuela-Python`.
-4. En **Main file path**, escribe exactamente: `src/ui/app.py`.
-5. Pulsa en **"Deploy"**. En un minuto obtendrás una URL pública profesional conectada al repositorio.
+A portfolio piece, not a product.
 
----
+- The generated PDF is a commercial mock-up. It has no sequential invoice series, no
+  issuer tax details and no retention policy, so it is not a legally valid invoice.
+- The 21 percent `IVA` rate is applied uniformly. Driving school tuition may qualify for
+  a different rate; this is unconfirmed and recorded as a known limitation.
+- There is no authentication, no multi-tenant isolation and no schema migration path.
+  Each is a deliberate exclusion, recorded in the charter, and each would block real use.
 
-## Licencia y Autor
-Diseño de arquitectura de software y desarrollo por **[Nain9Dev](https://github.com/Nain9Dev)**. Proyecto desarrollado como muestra técnica y comercial del dominio de Python en entornos empresariales.
+These are stated because a reviewer will find them anyway, and finding them undocumented
+says more than the limitations themselves.
+
+## Author
+
+Architecture and implementation by [naindev](https://www.naindev.com/).

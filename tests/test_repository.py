@@ -25,14 +25,14 @@ def test_repository_seeding_on_initialization(memory_repo: SQLiteRepository) -> 
 
 def test_save_new_student_and_retrieve(memory_repo: SQLiteRepository) -> None:
     new_student = Student(
-        dni="99887766X",
+        dni="99887766P",
         first_name="Guilherma",
         last_name="Torres",
         target_license="A2"
     )
     memory_repo.save_student(new_student)
 
-    fetched = memory_repo.get_student_by_dni("99887766X")
+    fetched = memory_repo.get_student_by_dni("99887766P")
     assert fetched is not None
     assert fetched.first_name == "Guilherma"
 
