@@ -1,5 +1,11 @@
 # NainDrive — Deterministic Driving School Management & Billing Engine
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-drive.naindev.com-10b981?style=flat-square&logo=google-chrome&logoColor=white)](https://drive.naindev.com/)
+[![Python 3.12](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Vue 3](https://img.shields.io/badge/Vue-3.5-4FC08D?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+
 Python 3.12 · FastAPI :8150 · Vue 3 + TypeScript :5379 · Clean Architecture · Pydantic v2 · SQLAlchemy 2.0
 
 A driving school operational platform where the financial arithmetic is verifiable: amounts are `Decimal`, rounding is explicit, identity documents are checksum-verified, and the stated invoice total equals the sum of its parts with zero tolerance.

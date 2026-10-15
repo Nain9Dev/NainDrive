@@ -56,9 +56,9 @@ async function handleReset() {
 
       <div class="nav-actions">
         <!-- API Status Pill -->
-        <div class="status-pill" title="Estado de conexión con el backend FastAPI">
+        <div class="status-pill" title="Estado de conexión del motor de autoescuela">
           <span class="pill-dot" :class="apiHealthy ? 'dot-online' : 'dot-offline'"></span>
-          <span class="pill-text">{{ apiHealthy ? 'FastAPI 8150' : 'Desconectado' }}</span>
+          <span class="pill-text">{{ apiHealthy ? 'Motor Online' : 'Desconectado' }}</span>
         </div>
 
         <!-- Reset Button -->
@@ -75,12 +75,12 @@ async function handleReset() {
           Reset Demo
         </button>
 
-        <!-- OpenAPI Scalar Link -->
-        <a class="btn btn-ghost btn-sm" href="/docs" target="_blank" rel="noopener">
+        <!-- GitHub Repo Link -->
+        <a class="btn btn-ghost btn-sm" href="https://github.com/Nain9Dev/Gestion-Autoescuela-Python" target="_blank" rel="noopener">
           <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M2 4h12M2 8h12M2 12h8" />
           </svg>
-          Scalar /docs
+          GitHub Repo
         </a>
 
         <!-- Portfolio Link -->
