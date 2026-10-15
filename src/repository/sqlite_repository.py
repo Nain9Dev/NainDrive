@@ -6,7 +6,7 @@ from typing import List, Optional
 from sqlalchemy import create_engine, Column, Integer, String, Float, MetaData, Table
 from sqlalchemy.sql import select, insert, update, delete
 
-from src.domain.models import Student, Instructor, LicensePackage
+from src.domain.models import Student, Instructor, LicensePackage, DgtExamAppointment
 from src.domain.exceptions import StudentNotFoundError
 
 metadata = MetaData()
@@ -20,6 +20,9 @@ students_table = Table(
     Column("first_name", String(100), nullable=False),
     Column("last_name", String(100), nullable=False),
     Column("phone", String(50), default="600000000"),
+    Column("birth_date", String(50), default="01-01-2000"),
+    Column("email", String(120), nullable=True),
+    Column("address", String(200), default="Madrid, Espana"),
     Column("target_license", String(20), default="B"),
     Column("assigned_instructor_id", String(50), default="INST-01"),
     Column("completed_classes", Integer, default=0),
@@ -51,6 +54,18 @@ packages_table = Table(
     Column("extra_class_price", Float, nullable=False),
     Column("dgt_exam_fee", Float, nullable=False),
     Column("renewal_fee", Float, default=150.0),
+)
+
+dgt_appointments_table = Table(
+    "dgt_appointments",
+    metadata,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("appointment_id", String(50), unique=True, index=True, nullable=False),
+    Column("student_dni", String(20), index=True, nullable=False),
+    Column("exam_type", String(20), nullable=False),
+    Column("appointment_date", String(50), nullable=False),
+    Column("center_location", String(200), default="Centro de Examenes DGT Madrid-Mostoles"),
+    Column("status", String(20), default="SCHEDULED"),
 )
 
 
@@ -187,6 +202,36 @@ class SQLiteRepository:
                 ]
                 conn.execute(insert(students_table), default_students)
 
+            appointment_count = conn.execute(select(dgt_appointments_table)).first()
+            if appointment_count is None:
+                default_appointments = [
+                    {
+                        "appointment_id": "DGT-2026-001",
+                        "student_dni": "53822281G",
+                        "exam_type": "THEORETICAL",
+                        "appointment_date": "22-11-2026",
+                        "center_location": "Centro de Examenes DGT Madrid-Mostoles",
+                        "status": "PASSED",
+                    },
+                    {
+                        "appointment_id": "DGT-2026-002",
+                        "student_dni": "53822281G",
+                        "exam_type": "PRACTICAL",
+                        "appointment_date": "15-12-2026",
+                        "center_location": "Centro de Examenes DGT Madrid-Mostoles",
+                        "status": "SCHEDULED",
+                    },
+                    {
+                        "appointment_id": "DGT-2026-003",
+                        "student_dni": "11223344B",
+                        "exam_type": "THEORETICAL",
+                        "appointment_date": "05-12-2026",
+                        "center_location": "Centro de Examenes DGT Madrid-Mostoles",
+                        "status": "PASSED",
+                    },
+                ]
+                conn.execute(insert(dgt_appointments_table), default_appointments)
+
     def get_all_students(self) -> List[Student]:
         with self.engine.connect() as conn:
             rows = conn.execute(select(students_table)).mappings().all()
@@ -203,7 +248,7 @@ class SQLiteRepository:
     def save_student(self, student: Student) -> Student:
         with self.engine.begin() as conn:
             existing = conn.execute(select(students_table).where(students_table.c.dni == student.dni)).first()
-            data = student.model_dump()
+            data = {k: v for k, v in student.model_dump().items() if k in students_table.c}
             if existing:
                 conn.execute(update(students_table).where(students_table.c.dni == student.dni).values(**data))
             else:
@@ -248,10 +293,45 @@ class SQLiteRepository:
             package_code="PERMIT_B", name="Permiso B Default", enrollment_fee=195.0, included_practical_classes=10, extra_class_price=32.50, dgt_exam_fee=94.05
         )
 
+    def save_dgt_appointment(self, appointment: DgtExamAppointment) -> DgtExamAppointment:
+        """Persists or updates a student's DGT examination appointment (REQ-004)."""
+        with self.engine.begin() as conn:
+            existing = conn.execute(
+                select(dgt_appointments_table).where(
+                    dgt_appointments_table.c.appointment_id == appointment.appointment_id
+                )
+            ).first()
+            data = appointment.model_dump()
+            if existing:
+                conn.execute(
+                    update(dgt_appointments_table)
+                    .where(dgt_appointments_table.c.appointment_id == appointment.appointment_id)
+                    .values(**data)
+                )
+            else:
+                conn.execute(insert(dgt_appointments_table), data)
+        return appointment
+
+    def get_dgt_appointments_by_student(self, dni: str) -> List[DgtExamAppointment]:
+        """Retrieves all DGT exam appointments for a given student DNI (REQ-004)."""
+        clean_dni = dni.strip().upper()
+        with self.engine.connect() as conn:
+            rows = conn.execute(
+                select(dgt_appointments_table).where(dgt_appointments_table.c.student_dni == clean_dni)
+            ).mappings().all()
+            return [DgtExamAppointment(**row) for row in rows]
+
+    def get_all_dgt_appointments(self) -> List[DgtExamAppointment]:
+        """Retrieves all DGT exam appointments."""
+        with self.engine.connect() as conn:
+            rows = conn.execute(select(dgt_appointments_table)).mappings().all()
+            return [DgtExamAppointment(**row) for row in rows]
+
     def reset_database_to_synthetic_defaults(self) -> None:
         """Clears current operational data and re-seeds original demonstration profiles."""
         with self.engine.begin() as conn:
             conn.execute(delete(students_table))
             conn.execute(delete(instructors_table))
             conn.execute(delete(packages_table))
+            conn.execute(delete(dgt_appointments_table))
         self._ensure_synthetic_seed_data()

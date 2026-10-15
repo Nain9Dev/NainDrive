@@ -9,7 +9,7 @@ import streamlit as st
 # Ensure root path is accessible when running via `streamlit run src/ui/app.py`
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 
-from src.repository.sqlite_repository import SQLiteRepository
+from src.services.driving_school_service import create_default_service, DrivingSchoolService
 from src.ui.components import (
     render_header,
     render_kpi_dashboard,
@@ -28,14 +28,14 @@ st.set_page_config(
 
 
 @st.cache_resource
-def get_repository() -> SQLiteRepository:
-    """Instantiates a singleton database repository connection for the active Streamlit runtime."""
-    return SQLiteRepository(db_url="sqlite:///autoescuela.db", auto_seed=True)
+def get_service() -> DrivingSchoolService:
+    """Instantiates a singleton application service for the active Streamlit runtime."""
+    return create_default_service(db_url="sqlite:///autoescuela.db")
 
 
 def main() -> None:
-    repo = get_repository()
-    render_sidebar_admin(repo)
+    service = get_service()
+    render_sidebar_admin(service)
     render_header()
 
     tab_dashboard, tab_students, tab_instructors, tab_billing = st.tabs(
@@ -48,17 +48,18 @@ def main() -> None:
     )
 
     with tab_dashboard:
-        render_kpi_dashboard(repo)
+        render_kpi_dashboard(service)
 
     with tab_students:
-        render_students_management(repo)
+        render_students_management(service)
 
     with tab_instructors:
-        render_instructors_view(repo)
+        render_instructors_view(service)
 
     with tab_billing:
-        render_billing_and_pdf(repo)
+        render_billing_and_pdf(service)
 
 
 if __name__ == "__main__":
     main()
+

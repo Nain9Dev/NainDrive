@@ -160,3 +160,26 @@ class InvoiceCalculation(BaseModel):
                 f"Total mismatch: stated {self.total_with_vat}, base plus tax is {expected_total}"
             )
         return self
+
+
+class DgtExamAppointment(BaseModel):
+    """Represents an official DGT driving test appointment scheduled for a student."""
+    appointment_id: str = Field(default_factory=lambda: f"DGT-{str(uuid.uuid4())[:8].upper()}")
+    student_dni: str
+    exam_type: Literal["THEORETICAL", "PRACTICAL"]
+    appointment_date: str = Field(..., description="Date of the scheduled exam in DD-MM-YYYY format")
+    center_location: str = Field(default="Centro de Examenes DGT Madrid-Mostoles")
+    status: Literal["SCHEDULED", "PASSED", "FAILED", "CANCELLED"] = "SCHEDULED"
+
+
+class KPIDashboardSummary(BaseModel):
+    """Read model aggregating executive dashboard figures for driving school operations."""
+    total_gross: Decimal
+    total_vat: Decimal
+    total_pending: Decimal
+    completed_lessons_sum: int
+    license_distribution: dict[str, int]
+    total_students: int
+    total_instructors: int
+    average_lessons_per_student: float
+
