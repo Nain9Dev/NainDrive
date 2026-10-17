@@ -1,0 +1,32 @@
+### NainDrive (Autoescuela) - REST API Requests
+@host = http://localhost:8000
+@api = {{host}}/api/v1
+
+### 1. Health Check
+GET {{host}}/health HTTP/1.1
+Accept: application/json
+
+### 2. Dashboard KPIs
+GET {{api}}/dashboard/kpis HTTP/1.1
+Accept: application/json
+
+### 3. List Students
+GET {{api}}/students HTTP/1.1
+Accept: application/json
+
+### 4. Create Student
+POST {{api}}/students HTTP/1.1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "full_name": "Carlos Gomez",
+  "document_id": "12345678Z",
+  "package_type": "B",
+  "practical_classes": 10,
+  "advance_payment_cents": 15000
+}
+
+### 5. Calculate and Generate Student Invoice PDF
+POST {{api}}/students/1/invoice HTTP/1.1
+Accept: application/pdf

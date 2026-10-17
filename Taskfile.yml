@@ -1,0 +1,22 @@
+version: '3'
+
+tasks:
+  dev-backend:
+    desc: "Start FastAPI API server"
+    cmds:
+      - uvicorn src.main:app --reload --port 8000
+
+  dev-frontend:
+    desc: "Start Vue 3 dev server"
+    cmds:
+      - npm --prefix NainDrive.Client run dev
+
+  test:
+    desc: "Execute pytest test suite"
+    cmds:
+      - pytest tests/ -v
+
+  build:
+    desc: "Build Vue 3 frontend bundle"
+    cmds:
+      - npm --prefix NainDrive.Client run build

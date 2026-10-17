@@ -1,0 +1,1358 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "NainDrive \u2014 Driving School Management API Gateway",
+    "description": "REST API for deterministic driving school accounting, student lifecycle management, and in-memory official PDF billing generation. Built on Python 3.12 and Clean Architecture.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Diagnostics"
+        ],
+        "summary": "Get Health Status",
+        "description": "Health check endpoint reporting API and persistence state.",
+        "operationId": "get_health_status_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Dashboard Summary",
+        "description": "Returns aggregated executive dashboard KPIs, accounting figures, and license distribution (REQ-010, REQ-011).",
+        "operationId": "get_dashboard_summary_api_v1_dashboard_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KPIDashboardSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students": {
+      "get": {
+        "tags": [
+          "Students"
+        ],
+        "summary": "List Students",
+        "description": "Lists all enrolled students.",
+        "operationId": "list_students_api_v1_students_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Student-Output"
+                  },
+                  "type": "array",
+                  "title": "Response List Students Api V1 Students Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Students"
+        ],
+        "summary": "Create Student",
+        "description": "Enrolls a new student with strict DNI/NIE modulo 23 checksum validation (REQ-001, REQ-002).",
+        "operationId": "create_student_api_v1_students_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Student-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}": {
+      "get": {
+        "tags": [
+          "Students"
+        ],
+        "summary": "Get Student",
+        "description": "Retrieves a single student by verified DNI/NIE.",
+        "operationId": "get_student_api_v1_students__dni__get",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Students"
+        ],
+        "summary": "Delete Student",
+        "description": "Deletes a student record by DNI.",
+        "operationId": "delete_student_api_v1_students__dni__delete",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}/classes": {
+      "post": {
+        "tags": [
+          "Student Operations"
+        ],
+        "summary": "Add Classes",
+        "description": "Records completed practical driving lessons for a student (REQ-003).",
+        "operationId": "add_classes_api_v1_students__dni__classes_post",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddClassesRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}/exams": {
+      "post": {
+        "tags": [
+          "Student Operations"
+        ],
+        "summary": "Register Exam",
+        "description": "Records a theoretical or practical exam attempt for a student.",
+        "operationId": "register_exam_api_v1_students__dni__exams_post",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterExamRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}/advances": {
+      "post": {
+        "tags": [
+          "Student Operations"
+        ],
+        "summary": "Record Advance",
+        "description": "Records an advance deposit payment towards the student's account (REQ-006).",
+        "operationId": "record_advance_api_v1_students__dni__advances_post",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordAdvanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}/invoice": {
+      "get": {
+        "tags": [
+          "Billing"
+        ],
+        "summary": "Get Invoice",
+        "description": "Calculates the authoritative itemized billing statement for a student (REQ-005, REQ-008, REQ-014).",
+        "operationId": "get_invoice_api_v1_students__dni__invoice_get",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceCalculation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}/pdf": {
+      "get": {
+        "tags": [
+          "Billing"
+        ],
+        "summary": "Download Invoice Pdf",
+        "description": "Generates and streams official PDF invoice documentation directly from memory without disk writes (REQ-009).",
+        "operationId": "download_invoice_pdf_api_v1_students__dni__pdf_get",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dgt/appointments": {
+      "get": {
+        "tags": [
+          "DGT Exams"
+        ],
+        "summary": "List All Dgt Appointments",
+        "description": "Lists all scheduled DGT examination appointments across all students (REQ-004).",
+        "operationId": "list_all_dgt_appointments_api_v1_dgt_appointments_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DgtExamAppointment"
+                  },
+                  "type": "array",
+                  "title": "Response List All Dgt Appointments Api V1 Dgt Appointments Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/students/{dni}/dgt/appointments": {
+      "get": {
+        "tags": [
+          "DGT Exams"
+        ],
+        "summary": "List Student Dgt Appointments",
+        "description": "Retrieves all DGT examination appointments for a specific student (REQ-004).",
+        "operationId": "list_student_dgt_appointments_api_v1_students__dni__dgt_appointments_get",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DgtExamAppointment"
+                  },
+                  "title": "Response List Student Dgt Appointments Api V1 Students  Dni  Dgt Appointments Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "DGT Exams"
+        ],
+        "summary": "Schedule Dgt Appointment",
+        "description": "Schedules and persists an official DGT exam appointment for a student (REQ-004).",
+        "operationId": "schedule_dgt_appointment_api_v1_students__dni__dgt_appointments_post",
+        "parameters": [
+          {
+            "name": "dni",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Dni"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleDgtAppointmentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DgtExamAppointment"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/instructors": {
+      "get": {
+        "tags": [
+          "Instructors & Fleet"
+        ],
+        "summary": "List Instructors",
+        "description": "Lists all instructors, assigned fleet vehicles, and fuel expenses.",
+        "operationId": "list_instructors_api_v1_instructors_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Instructor"
+                  },
+                  "type": "array",
+                  "title": "Response List Instructors Api V1 Instructors Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/instructors/{instructor_id}/fuel": {
+      "post": {
+        "tags": [
+          "Instructors & Fleet"
+        ],
+        "summary": "Record Fuel Expense",
+        "description": "Records vehicle fuel expenses attributed to an instructor.",
+        "operationId": "record_fuel_expense_api_v1_instructors__instructor_id__fuel_post",
+        "parameters": [
+          {
+            "name": "instructor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Instructor Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordFuelRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instructor"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/packages": {
+      "get": {
+        "tags": [
+          "License Packages"
+        ],
+        "summary": "List Packages",
+        "description": "Lists commercial license packages and associated pricing rules.",
+        "operationId": "list_packages_api_v1_packages_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/LicensePackage"
+                  },
+                  "type": "array",
+                  "title": "Response List Packages Api V1 Packages Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/reset": {
+      "post": {
+        "tags": [
+          "Admin & Demo"
+        ],
+        "summary": "Reset Demo Database",
+        "description": "Resets operational database to synthetic fictional demo profiles (REQ-012).",
+        "operationId": "reset_demo_database_api_v1_admin_reset_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AddClassesRequest": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Count",
+            "description": "Number of practical lessons to add"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count"
+        ],
+        "title": "AddClassesRequest"
+      },
+      "DgtExamAppointment": {
+        "properties": {
+          "appointment_id": {
+            "type": "string",
+            "title": "Appointment Id"
+          },
+          "student_dni": {
+            "type": "string",
+            "title": "Student Dni"
+          },
+          "exam_type": {
+            "type": "string",
+            "enum": [
+              "THEORETICAL",
+              "PRACTICAL"
+            ],
+            "title": "Exam Type"
+          },
+          "appointment_date": {
+            "type": "string",
+            "title": "Appointment Date",
+            "description": "Date of the scheduled exam in DD-MM-YYYY format"
+          },
+          "center_location": {
+            "type": "string",
+            "title": "Center Location",
+            "default": "Centro de Examenes DGT Madrid-Mostoles"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "PASSED",
+              "FAILED",
+              "CANCELLED"
+            ],
+            "title": "Status",
+            "default": "SCHEDULED"
+          }
+        },
+        "type": "object",
+        "required": [
+          "student_dni",
+          "exam_type",
+          "appointment_date"
+        ],
+        "title": "DgtExamAppointment",
+        "description": "Represents an official DGT driving test appointment scheduled for a student."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Instructor": {
+        "properties": {
+          "instructor_id": {
+            "type": "string",
+            "title": "Instructor Id"
+          },
+          "full_name": {
+            "type": "string",
+            "title": "Full Name"
+          },
+          "assigned_vehicle_plate": {
+            "type": "string",
+            "title": "Assigned Vehicle Plate",
+            "default": "0000-XXX"
+          },
+          "vehicle_model": {
+            "type": "string",
+            "title": "Vehicle Model",
+            "default": "Standard Vehicle"
+          },
+          "itv_expiration_date": {
+            "type": "string",
+            "title": "Itv Expiration Date",
+            "default": "31-12-2026"
+          },
+          "total_fuel_expenses": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Fuel Expenses",
+            "default": "0.00"
+          }
+        },
+        "type": "object",
+        "required": [
+          "full_name"
+        ],
+        "title": "Instructor",
+        "description": "Instructor domain model containing fleet asset assignments and expense compliance."
+      },
+      "InvoiceCalculation": {
+        "properties": {
+          "invoice_number": {
+            "type": "string",
+            "title": "Invoice Number"
+          },
+          "invoice_date": {
+            "type": "string",
+            "title": "Invoice Date"
+          },
+          "student_dni": {
+            "type": "string",
+            "title": "Student Dni"
+          },
+          "student_name": {
+            "type": "string",
+            "title": "Student Name"
+          },
+          "target_license": {
+            "type": "string",
+            "title": "Target License"
+          },
+          "enrollment_fee": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Enrollment Fee"
+          },
+          "included_classes": {
+            "type": "integer",
+            "title": "Included Classes"
+          },
+          "completed_classes": {
+            "type": "integer",
+            "title": "Completed Classes"
+          },
+          "extra_classes_count": {
+            "type": "integer",
+            "title": "Extra Classes Count"
+          },
+          "extra_classes_cost": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Extra Classes Cost"
+          },
+          "total_exams_count": {
+            "type": "integer",
+            "title": "Total Exams Count"
+          },
+          "total_exams_cost": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Exams Cost"
+          },
+          "subtotal_amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Subtotal Amount"
+          },
+          "vat_percentage": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Vat Percentage",
+            "default": "0.21"
+          },
+          "vat_amount": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Vat Amount"
+          },
+          "total_with_vat": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total With Vat"
+          },
+          "advances_paid": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Advances Paid"
+          },
+          "pending_balance": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Pending Balance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "student_dni",
+          "student_name",
+          "target_license",
+          "enrollment_fee",
+          "included_classes",
+          "completed_classes",
+          "extra_classes_count",
+          "extra_classes_cost",
+          "total_exams_count",
+          "total_exams_cost",
+          "subtotal_amount",
+          "vat_amount",
+          "total_with_vat",
+          "advances_paid",
+          "pending_balance"
+        ],
+        "title": "InvoiceCalculation",
+        "description": "Immutable accounting statement summarizing training costs, taxes, and balance reconciliation."
+      },
+      "KPIDashboardSummary": {
+        "properties": {
+          "total_gross": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Gross"
+          },
+          "total_vat": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Vat"
+          },
+          "total_pending": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Pending"
+          },
+          "completed_lessons_sum": {
+            "type": "integer",
+            "title": "Completed Lessons Sum"
+          },
+          "license_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "License Distribution"
+          },
+          "total_students": {
+            "type": "integer",
+            "title": "Total Students"
+          },
+          "total_instructors": {
+            "type": "integer",
+            "title": "Total Instructors"
+          },
+          "average_lessons_per_student": {
+            "type": "number",
+            "title": "Average Lessons Per Student"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_gross",
+          "total_vat",
+          "total_pending",
+          "completed_lessons_sum",
+          "license_distribution",
+          "total_students",
+          "total_instructors",
+          "average_lessons_per_student"
+        ],
+        "title": "KPIDashboardSummary",
+        "description": "Read model aggregating executive dashboard figures for driving school operations."
+      },
+      "LicensePackage": {
+        "properties": {
+          "package_code": {
+            "type": "string",
+            "title": "Package Code",
+            "description": "Unique code for the license package, e.g., PERMIT_B"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Human readable commercial name"
+          },
+          "enrollment_fee": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Enrollment Fee",
+            "description": "Initial registration base cost before tax"
+          },
+          "included_practical_classes": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Included Practical Classes",
+            "description": "Number of practical driving lessons included in registration"
+          },
+          "extra_class_price": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Extra Class Price",
+            "description": "Cost per individual extra driving class"
+          },
+          "dgt_exam_fee": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Dgt Exam Fee",
+            "description": "Cost for practical or theoretical exam attempt"
+          },
+          "renewal_fee": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Renewal Fee",
+            "description": "Cost for document renewal after exhausting exam attempts",
+            "default": "150.00"
+          }
+        },
+        "type": "object",
+        "required": [
+          "package_code",
+          "name",
+          "enrollment_fee",
+          "included_practical_classes",
+          "extra_class_price",
+          "dgt_exam_fee"
+        ],
+        "title": "LicensePackage",
+        "description": "Represents a driving license catalog offer (e.g., Permit B, A2, C) with associated financial policies."
+      },
+      "RecordAdvanceRequest": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Amount",
+            "description": "Advance payment amount in EUR"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount"
+        ],
+        "title": "RecordAdvanceRequest"
+      },
+      "RecordFuelRequest": {
+        "properties": {
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Amount",
+            "description": "Fuel expense in EUR"
+          }
+        },
+        "type": "object",
+        "required": [
+          "amount"
+        ],
+        "title": "RecordFuelRequest"
+      },
+      "RegisterExamRequest": {
+        "properties": {
+          "exam_type": {
+            "type": "string",
+            "enum": [
+              "THEORETICAL",
+              "PRACTICAL"
+            ],
+            "title": "Exam Type",
+            "description": "Type of DGT examination"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exam_type"
+        ],
+        "title": "RegisterExamRequest"
+      },
+      "ScheduleDgtAppointmentRequest": {
+        "properties": {
+          "exam_type": {
+            "type": "string",
+            "enum": [
+              "THEORETICAL",
+              "PRACTICAL"
+            ],
+            "title": "Exam Type"
+          },
+          "appointment_date": {
+            "type": "string",
+            "title": "Appointment Date",
+            "description": "Date of the exam, e.g. 15-12-2026"
+          },
+          "center_location": {
+            "type": "string",
+            "title": "Center Location",
+            "default": "Centro de Examenes DGT Madrid-Mostoles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "exam_type",
+          "appointment_date"
+        ],
+        "title": "ScheduleDgtAppointmentRequest"
+      },
+      "Student-Input": {
+        "properties": {
+          "registration_number": {
+            "type": "string",
+            "title": "Registration Number"
+          },
+          "dni": {
+            "type": "string",
+            "title": "Dni",
+            "description": "Spanish DNI or NIE, checksum verified"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "birth_date": {
+            "type": "string",
+            "title": "Birth Date",
+            "default": "01-01-2000"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone",
+            "default": "600000000"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "default": "Madrid, Espana"
+          },
+          "target_license": {
+            "type": "string",
+            "title": "Target License",
+            "default": "B"
+          },
+          "assigned_instructor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Instructor Id",
+            "default": "INST-01"
+          },
+          "completed_classes": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Completed Classes",
+            "description": "Total practical lessons completed by student",
+            "default": 0
+          },
+          "theoretical_exams_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Theoretical Exams Count",
+            "default": 0
+          },
+          "practical_exams_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Practical Exams Count",
+            "default": 0
+          },
+          "total_advances_paid": {
+            "anyOf": [
+              {
+                "type": "number",
+                "minimum": 0.0
+              },
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              }
+            ],
+            "title": "Total Advances Paid",
+            "default": "0.00"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dni",
+          "first_name",
+          "last_name"
+        ],
+        "title": "Student",
+        "description": "Authoritative student domain model with strict Spanish identity card formatting and progress tracking."
+      },
+      "Student-Output": {
+        "properties": {
+          "registration_number": {
+            "type": "string",
+            "title": "Registration Number"
+          },
+          "dni": {
+            "type": "string",
+            "title": "Dni",
+            "description": "Spanish DNI or NIE, checksum verified"
+          },
+          "first_name": {
+            "type": "string",
+            "title": "First Name"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name"
+          },
+          "birth_date": {
+            "type": "string",
+            "title": "Birth Date",
+            "default": "01-01-2000"
+          },
+          "phone": {
+            "type": "string",
+            "title": "Phone",
+            "default": "600000000"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "default": "Madrid, Espana"
+          },
+          "target_license": {
+            "type": "string",
+            "title": "Target License",
+            "default": "B"
+          },
+          "assigned_instructor_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Assigned Instructor Id",
+            "default": "INST-01"
+          },
+          "completed_classes": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Completed Classes",
+            "description": "Total practical lessons completed by student",
+            "default": 0
+          },
+          "theoretical_exams_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Theoretical Exams Count",
+            "default": 0
+          },
+          "practical_exams_count": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Practical Exams Count",
+            "default": 0
+          },
+          "total_advances_paid": {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$",
+            "title": "Total Advances Paid",
+            "default": "0.00"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dni",
+          "first_name",
+          "last_name"
+        ],
+        "title": "Student",
+        "description": "Authoritative student domain model with strict Spanish identity card formatting and progress tracking."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
