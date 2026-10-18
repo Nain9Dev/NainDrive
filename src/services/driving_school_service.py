@@ -15,8 +15,8 @@ from src.domain.models import (
     LicensePackage,
     Student,
 )
+from src.domain.interfaces import IDrivingSchoolRepository
 from src.domain.money import to_money
-from src.repository.sqlite_repository import SQLiteRepository
 from src.services.billing_service import BillingService
 from src.services.pdf_service import generate_invoice_pdf_bytes
 
@@ -24,7 +24,7 @@ from src.services.pdf_service import generate_invoice_pdf_bytes
 class DrivingSchoolService:
     """Authoritative application service for driving school workflows and reporting."""
 
-    def __init__(self, repository: SQLiteRepository):
+    def __init__(self, repository: IDrivingSchoolRepository):
         self._repo = repository
 
     def get_kpi_dashboard_summary(self) -> KPIDashboardSummary:
@@ -191,6 +191,8 @@ class DrivingSchoolService:
 
 def create_default_service(db_url: str = "sqlite:///autoescuela.db") -> DrivingSchoolService:
     """Convenience factory creating a ready-to-use DrivingSchoolService instance."""
+    from src.repository.sqlite_repository import SQLiteRepository
+
     repo = SQLiteRepository(db_url=db_url, auto_seed=True)
     return DrivingSchoolService(repo)
 

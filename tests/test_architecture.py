@@ -87,3 +87,13 @@ def test_repository_layer_does_not_depend_on_presentation():
         if any(module == prefix or module.startswith(f"{prefix}.") for prefix in forbidden_prefixes)
     ]
     assert not violations, f"Repository layer violations detected: {violations}"
+
+
+def test_sqlite_repository_satisfies_domain_repository_protocol():
+    """SQLiteRepository must satisfy all operations defined by IDrivingSchoolRepository protocol."""
+    from src.domain.interfaces import IDrivingSchoolRepository
+    from src.repository.sqlite_repository import SQLiteRepository
+
+    repo = SQLiteRepository("sqlite:///:memory:", auto_seed=False)
+    assert isinstance(repo, IDrivingSchoolRepository)
+
