@@ -56,7 +56,7 @@ graph TD
 
 | Layer | Responsibility |
 | :--- | :--- |
-| `NainDrive.Client/` | Decoupled Vue 3 + TypeScript client (:5379), dark luxury glassmorphism UI |
+| `NainDrive.Client/` | Decoupled Vue 3 + TypeScript client (:5379): navigation rail, SVG dashboard, student cards with invoice drawer, exam timeline, fleet cards |
 | `src/api/` | FastAPI REST gateway (:8150) with Scalar interactive OpenAPI docs at `/docs` |
 | `src/services/` | `DrivingSchoolService` application orchestration and in-memory PDF generation |
 | `src/domain/` | Entities and invariants. `money.py` (rounding policy), `identity.py` (modulo 23) |

@@ -60,6 +60,14 @@ Labels: `[A]` agent alone · `[M]` mixed, needs a human action · `[H]` human on
       reactive KPI dashboard, student lifecycle management, DGT appointment scheduling, and 1-click in-memory PDF download.
       `npm run build` succeeds with 0 errors and 0 warnings.
 
+- [x] **T-018** `[A]` Visual-first client shell for the public demo
+      Implements: specs/002-visual-first-client
+      Verified: Navigation rail with four icon destinations, dashboard with SVG donut and
+      balance bar, student cards with progress rings and a side drawer for the invoice and
+      PDF, exam timeline grouped by month, fleet cards with plate and ITV gauge, toasts
+      instead of `alert()`. `npm run build` clean, checked at desktop and 375 px widths.
+      No new dependencies; `services/`, `types/` and the mock store untouched.
+
 - [x] **T-004** `[A]` Regression test for rounding across line items
       Superseded by T-013, which covers it with a stricter invariant.
 
