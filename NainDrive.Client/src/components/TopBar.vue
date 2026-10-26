@@ -4,6 +4,7 @@ import AppIcon from './AppIcon.vue'
 import ModalDialog from './ui/ModalDialog.vue'
 import { resetDatabase } from '../services/api'
 import { useToast } from '../composables/useToast'
+import { currentLocale, setLocale, t } from '../locales/i18n'
 
 defineProps<{
   healthy: boolean
@@ -21,10 +22,10 @@ async function doReset() {
   try {
     await resetDatabase()
     confirmOpen.value = false
-    toast.success('Demo restaurada')
+    toast.success(t('demoRestored'))
     emit('refresh')
   } catch {
-    toast.error('No se pudo restaurar la demo')
+    toast.error(t('demoRestoreFailed'))
   } finally {
     resetting.value = false
   }
@@ -56,12 +57,34 @@ async function doReset() {
     </div>
 
     <div class="actions">
+      <div class="lang-switch-group" role="group" aria-label="Language selector">
+        <button
+          type="button"
+          class="lang-btn"
+          :class="{ active: currentLocale === 'es' }"
+          @click="setLocale('es')"
+          aria-label="Español de España"
+        >
+          ES
+        </button>
+        <span class="lang-divider">|</span>
+        <button
+          type="button"
+          class="lang-btn"
+          :class="{ active: currentLocale === 'en' }"
+          @click="setLocale('en')"
+          aria-label="English"
+        >
+          EN
+        </button>
+      </div>
+
       <span class="status" :class="healthy ? 'on' : 'off'" :title="healthy ? 'Motor conectado' : 'Modo demo local'">
         <AppIcon :name="healthy ? 'wifi' : 'wifi-off'" :size="16" />
-        <span class="status-text">{{ healthy ? 'API' : 'Demo' }}</span>
+        <span class="status-text">{{ healthy ? t('apiOnline') : t('demoMode') }}</span>
       </span>
 
-      <button type="button" class="icon-btn" aria-label="Restaurar datos de demo" title="Restaurar demo" @click="confirmOpen = true">
+      <button type="button" class="icon-btn" :aria-label="t('restoreDemo')" :title="t('restoreDemo')" @click="confirmOpen = true">
         <AppIcon name="refresh" :size="18" />
       </button>
 
@@ -75,13 +98,13 @@ async function doReset() {
       </a>
     </div>
 
-    <ModalDialog :open="confirmOpen" title="Restaurar demo" eyebrow="Datos sintéticos" :width="420" @close="confirmOpen = false">
-      <p class="muted">Vuelve a los 4 alumnos, 3 instructores y 3 convocatorias iniciales.</p>
+    <ModalDialog :open="confirmOpen" :title="t('restoreDemo')" :eyebrow="t('demoTitle')" :width="420" @close="confirmOpen = false">
+      <p class="muted">{{ t('restoreDesc') }}</p>
       <template #footer>
-        <button type="button" class="btn btn-ghost" @click="confirmOpen = false">Cancelar</button>
+        <button type="button" class="btn btn-ghost" @click="confirmOpen = false">{{ t('cancel') }}</button>
         <button type="button" class="btn btn-primary" :disabled="resetting" @click="doReset">
           <AppIcon name="refresh" :size="16" />
-          Restaurar
+          {{ t('restore') }}
         </button>
       </template>
     </ModalDialog>
@@ -137,6 +160,49 @@ async function doReset() {
   display: flex;
   align-items: center;
   gap: 0.35rem;
+}
+
+.lang-switch-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--r-full);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-right: 0.3rem;
+}
+
+.lang-btn {
+  background: transparent;
+  border: none;
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: all 0.15s ease;
+}
+
+.lang-btn:hover {
+  color: var(--ink-1);
+}
+
+.lang-btn.active {
+  color: var(--blue-2);
+  background: rgba(43, 114, 245, 0.15);
+}
+
+.lang-divider {
+  color: var(--line);
+  font-size: 0.7rem;
+  user-select: none;
 }
 
 .status {
