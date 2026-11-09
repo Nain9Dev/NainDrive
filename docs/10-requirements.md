@@ -42,3 +42,7 @@ A student is a natural person, so corporate `NIF` is out of scope. Shape alone i
 **REQ-012** When the application starts against an empty database, the system shall seed fictional demonstration records.
 
 **REQ-013** The system shall never persist, log or seed real personal data.
+
+## Discoverability
+
+**REQ-015** The public page shall declare one canonical URL, a 70 to 160 character description, Open Graph and Twitter card metadata and `SoftwareApplication` JSON-LD naming its author, and the deployed site shall serve `robots.txt` (advertising the sitemap), `sitemap.xml` and `llms.txt` from its root.

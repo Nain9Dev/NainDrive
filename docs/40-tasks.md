@@ -68,6 +68,15 @@ Labels: `[A]` agent alone · `[M]` mixed, needs a human action · `[H]` human on
       instead of `alert()`. `npm run build` clean, checked at desktop and 375 px widths.
       No new dependencies; `services/`, `types/` and the mock store untouched.
 
+- [x] **T-019** `[A]` Search and AI-engine discoverability for the public demo
+      Implements: specs/next-seo-discoverability (REQ-015)
+      Verified: `tests/test_seo_discoverability.py` red (7 of 8 failing), then green; full suite
+      67 passed. Canonical, Open Graph, Twitter card and JSON-LD in `NainDrive.Client/index.html`;
+      `robots.txt`, `sitemap.xml` and `llms.txt` in `NainDrive.Client/public/`.
+
+- [ ] **T-020** `[H]` Submit the sitemap in Search Console and Bing Webmaster Tools
+      Needs the owner's accounts; do it after the change is merged and deployed.
+
 - [x] **T-004** `[A]` Regression test for rounding across line items
       Superseded by T-013, which covers it with a stricter invariant.
 
