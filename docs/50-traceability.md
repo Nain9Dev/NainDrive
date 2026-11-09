@@ -22,6 +22,7 @@ whatever the code says.
 | REQ-012 demo seeding | `tests/test_repository.py`, `tests/test_api_endpoints.py` | Covered |
 | REQ-013 no real personal data | Enforced by synthetic seed review | Enforced by architecture review |
 | REQ-014 overpayment yields a credit | `tests/test_monetary_precision.py` | Covered |
+| REQ-015 crawler-ready public page and discovery files | `tests/test_seo_discoverability.py` | Covered, 8 cases |
 
 ## Summary
 

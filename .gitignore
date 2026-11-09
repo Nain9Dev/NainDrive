@@ -37,6 +37,7 @@ autoescuela.db
 *.txt
 Factura_*.txt
 !requirements.txt
+!NainDrive.Client/public/*.txt
 !README.md
 !pytest.ini
 !*.toml
