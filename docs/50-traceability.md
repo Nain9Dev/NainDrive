@@ -23,6 +23,7 @@ whatever the code says.
 | REQ-013 no real personal data | Enforced by synthetic seed review | Enforced by architecture review |
 | REQ-014 overpayment yields a credit | `tests/test_monetary_precision.py` | Covered |
 | REQ-015 crawler-ready public page and discovery files | `tests/test_seo_discoverability.py` | Covered, 8 cases |
+| REQ-016 installable public page, no service worker | `tests/test_pwa_install.py` | Covered, 5 cases |
 
 ## Summary
 

@@ -77,6 +77,15 @@ Labels: `[A]` agent alone · `[M]` mixed, needs a human action · `[H]` human on
 - [ ] **T-020** `[H]` Submit the sitemap in Search Console and Bing Webmaster Tools
       Needs the owner's accounts; do it after the change is merged and deployed.
 
+- [x] **T-021** `[A]` Make the public demo installable on Android and iOS
+      Implements: specs/next-pwa-install (REQ-016)
+      Verified: `tests/test_pwa_install.py` red (1 failed, 3 errors), then green; full suite 72 passed.
+      Manifest and icons in `NainDrive.Client/public/`, install tags in `NainDrive.Client/index.html`.
+
+- [ ] **T-022** `[M]` Verify the install on real phones after the deploy
+      Agent: checks the live manifest answers 200. Human: installs from Chrome on Android and from
+      Safari on an iPhone and confirms icon, label and window.
+
 - [x] **T-004** `[A]` Regression test for rounding across line items
       Superseded by T-013, which covers it with a stricter invariant.
 
