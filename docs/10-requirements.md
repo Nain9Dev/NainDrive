@@ -46,3 +46,7 @@ A student is a natural person, so corporate `NIF` is out of scope. Shape alone i
 ## Discoverability
 
 **REQ-015** The public page shall declare one canonical URL, a 70 to 160 character description, Open Graph and Twitter card metadata and `SoftwareApplication` JSON-LD naming its author, and the deployed site shall serve `robots.txt` (advertising the sitemap), `sitemap.xml` and `llms.txt` from its root.
+
+## Installability
+
+**REQ-016** When a visitor opens the public page on Android Chrome or iOS Safari, the site shall be installable as a standalone app: it shall serve a web app manifest with the fixed names, a 192 px and a 512 px icon and a maskable icon, and the page shall link the manifest and the iOS home-screen tags. The site shall register no service worker.
